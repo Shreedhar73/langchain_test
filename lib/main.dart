@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:lang_chain/langchain_functions/langchain_functions.dart';
 // import 'package:langchain/langchain.dart';
@@ -103,12 +104,19 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          final docs = await Methods().load('');
-          final summary =
-              await Methods().generateSummary(docs, prompt: cont.text);
-          setState(() {
-            summery = summary;
-          });
+          final data = await FilePicker.platform.pickFiles(
+            allowedExtensions: ['txt'],
+            type: FileType.custom,
+            withData: true,
+          );
+          if (data?.files.isNotEmpty ?? false) {
+            final docs = await Methods().load(data!.files.first.path ?? '');
+            final summary =
+                await Methods().generateSummary(docs, prompt: cont.text);
+            setState(() {
+              summery = summary;
+            });
+          }
         },
         tooltip: 'Increment',
         child: Icon(Icons.add),

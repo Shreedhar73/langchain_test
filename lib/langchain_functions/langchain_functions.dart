@@ -4,8 +4,7 @@ import 'package:langchain/langchain.dart';
 import 'package:langchain_openai/langchain_openai.dart';
 
 class Methods {
-  static const openaiApiKey =
-      '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';
+  static const openaiApiKey = '';
   final openai = OpenAI(apiKey: openaiApiKey, temperature: 0.9);
 
   Future<String> chat(String prmpt) async {
@@ -17,8 +16,9 @@ class Methods {
   }
 
   Future<List<Document>> load(String filePath) async {
-    final textLoader = WebBaseLoader(['https://younginnovations.com.np/']);
-    final response = await textLoader.load();
+    // final textLoader = WebBaseLoader(['https://docs.google.com/document/d/1OPX0cEMlTlWCtxp0UfYL81M7h694evD3eeZ39CSoXDY/edit?usp=sharing']);
+    // final textLoaded = TextLoaders();
+    final response = await TextLoader(filePath).load();
 
     return response;
   }
@@ -30,10 +30,12 @@ class Methods {
 
     final questionAnswerChain = StuffDocumentsQAChain(
       llm: openai,
-      prompt: PromptTemplate.fromTemplate(''' $prompt ? 
-          Write a maximum of 2 lines.
-          
-           "{context}" '''),
+      prompt: PromptTemplate.fromTemplate(
+        ''' $prompt
+           Write a maximum of 2 lines.
+
+           "{context}" ''',
+      ),
     );
 
 //     final summarizeChain = SummarizeChain.mapReduce(
@@ -53,7 +55,7 @@ class Methods {
 
 // BULLET POINT SUMMARY:'''),
 //     );
-    // return summarizeChain.run(docsChunks);
+//     return summarizeChain.run(docsChunks);
     return questionAnswerChain.run([docsChunks.first]);
   }
 }
